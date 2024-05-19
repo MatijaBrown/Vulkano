@@ -1,0 +1,6 @@
+{
+    "glsllint.glslangValidatorArgs": "-V",
+    "glsllint.additionalStageAssociations": {
+        
+    }
+}

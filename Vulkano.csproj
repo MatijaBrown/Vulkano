@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <PackageOutputPath>$(OutputPath)</PackageOutputPath>
+    <AppDesignerFolder>Resources</AppDesignerFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Silk.NET.Input" Version="2.20.0" />
+    <PackageReference Include="Silk.NET.Vulkan" Version="2.20.0" />
+    <PackageReference Include="Silk.NET.Vulkan.Extensions.EXT" Version="2.20.0" />
+    <PackageReference Include="Silk.NET.Vulkan.Extensions.KHR" Version="2.20.0" />
+    <PackageReference Include="Silk.NET.Vulkan.Extensions.NV" Version="2.20.0" />
+    <PackageReference Include="Silk.NET.Windowing" Version="2.20.0" />
+    <PackageReference Include="StbImageSharp" Version="2.27.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Graphics\Shaders\simpleFragmentShader.spv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Graphics\Shaders\simpleVertexShader.spv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Terrain.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Terrain.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Terrain.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Terrain.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="./Graphics/Shaders/compile.bat ./Graphics/Shaders $(OutputPath)/Graphics/Shaders&#xD;&#xA;" />
+  </Target>
+
+</Project>
