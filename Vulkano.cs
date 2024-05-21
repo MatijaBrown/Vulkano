@@ -67,9 +67,14 @@ namespace Vulkano
             {
                 keyboard.KeyDown += (_, key, sc) =>
                 {
-                    if (key == Key.Enter)
+                    switch (key)
                     {
-                        _world.Save();
+                        case Key.Enter:
+                            _world.Save();
+                            break;
+                        case Key.G:
+                            _world.Regenerate();
+                            break;
                     }
                 };
             }

@@ -1,7 +1,5 @@
-﻿using Silk.NET.Maths;
-using System.IO.Compression;
-using Vulkano.Utils.Maths;
-using Vulkano.Utils.Physics;
+﻿using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace Vulkano.World
 {
@@ -29,7 +27,6 @@ namespace Vulkano.World
             _lightDepths = new uint[Width * Depth];
 
             Load();
-            CalcLightDepths(0, 0, Width, Depth);
         }
 
         public void Load()
@@ -42,25 +39,11 @@ namespace Vulkano.World
                 zipStream.Close();
                 zipStream.Dispose();
                 Console.WriteLine("World loaded from world.sav");
+                CalcLightDepths(0, 0, Width, Depth);
             }
             else
             {
-                for (uint y = 0; y < Height; y++)
-                {
-                    for (uint x = 0; x < Width; x++)
-                    {
-                        for (uint z = 0; z < Depth; z++)
-                        {
-                            uint i = y * Width * Depth + x * Depth + z;
-                            byte block = 0;
-                            if (y <= Height * 2 / 3)
-                            {
-                                block = 1;
-                            }
-                            _blocks[i] = block;
-                        }
-                    }
-                }
+                Regenerate();
             }
         }
 
@@ -72,6 +55,27 @@ namespace Vulkano.World
             zipStream.Close();
             zipStream.Dispose();
             Console.WriteLine("World saved to world.sav");
+        }
+
+        public void Regenerate()
+        {
+            for (uint y = 0; y < Height; y++)
+            {
+                for (uint x = 0; x < Width; x++)
+                {
+                    for (uint z = 0; z < Depth; z++)
+                    {
+                        uint i = y * Width * Depth + x * Depth + z;
+                        byte block = 0;
+                        if (y <= Height * 2 / 3)
+                        {
+                            block = 1;
+                        }
+                        _blocks[i] = block;
+                    }
+                }
+            }
+            CalcLightDepths(0, 0, Width, Depth);
         }
 
         public void CalcLightDepths(uint x0, uint z0, uint w, uint d)
