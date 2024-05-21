@@ -122,35 +122,6 @@ namespace Vulkano.World
             return !IsBlock(x, y, z);
         }
 
-        public IReadOnlyList<AABB> GetBlocksInRange(AABB bounds)
-        {
-            var foundBlocks = new List<AABB>();
-
-            int x0 = Math.Max((int)bounds.Min.X, 0);
-            int y0 = Math.Max((int)bounds.Min.Y, 0);
-            int z0 = Math.Max((int)bounds.Min.Z, 0);
-                
-            int x1 = Math.Min((int)bounds.Max.X + 1, (int)Width);
-            int y1 = Math.Min((int)bounds.Max.Y + 1, (int)Height);
-            int z1 = Math.Min((int)bounds.Max.Z + 1, (int)Depth);
-
-            for (int y = y0; y <= y1; y++)
-            {
-                for (int x = x0; x <= x1; x++)
-                {
-                    for (int z = z0; z <= z1; z++)
-                    {
-                        if (IsBlock((uint)x, (uint)y, (uint)z))
-                        {
-                            foundBlocks.Add(new AABB(x, y, z, x + 1, y + 1, z + 1));
-                        }
-                    }
-                }
-            }
-
-            return foundBlocks.AsReadOnly();
-        }
-
         public uint GetLightLevel(uint x, uint y, uint z)
         {
             if (x >= Width || y >= Height || z >= Depth)

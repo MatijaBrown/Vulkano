@@ -47,7 +47,7 @@ namespace Vulkano.Utils.Maths
 
         public void MoveToPlayer(Player player)
         {
-            Position = player.Position;
+            Position = player.Eyes;
             Facing = player.Facing;
         }
 

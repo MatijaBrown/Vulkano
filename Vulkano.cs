@@ -134,7 +134,7 @@ namespace Vulkano
             }
         }
 
-        public void Render(double _)
+        public void Render(double d)
         {
             if (_hitResult.HasValue)
             {
