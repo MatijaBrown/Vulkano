@@ -1,7 +1,7 @@
 ﻿using Silk.NET.Maths;
 using System.Numerics;
 using Vulkano.Engine;
-using Vulkano.Entities;
+using Vulkano.Entities.Creatures;
 
 namespace Vulkano.Utils.Maths
 {

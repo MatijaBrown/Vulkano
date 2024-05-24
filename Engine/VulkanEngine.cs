@@ -542,6 +542,12 @@ namespace Vulkano.Engine
             _vk.UpdateDescriptorSets(Device, 1, setWrite, 0, null);
         }
 
+        public VBuffer<T> StagingBuffer<T>(uint count)
+            where T : unmanaged
+        {
+            return new VBuffer<T>(count, BufferUsageFlags.TransferSrcBit, MemoryPropertyFlags.HostVisibleBit | MemoryPropertyFlags.HostCoherentBit, this, _vk);
+        }
+
         public unsafe void Dispose()
         {
             _vk.DestroyDescriptorPool(Device, DescriptorPool, null);

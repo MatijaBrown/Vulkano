@@ -175,7 +175,7 @@ namespace Vulkano.Engine
             if (bindingDescription.HasValue)
             {
                 bDescription = bindingDescription.Value;
-                vertexInputInfo.VertexAttributeDescriptionCount = 1;
+                vertexInputInfo.VertexBindingDescriptionCount = 1;
                 vertexInputInfo.PVertexBindingDescriptions = &bDescription;
                 fixed (VertexInputAttributeDescription* ptr = attributeDescriptions)
                 {

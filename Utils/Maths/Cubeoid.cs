@@ -60,5 +60,12 @@ namespace Vulkano.Utils.Maths
             return true;
         }
 
+        public Cubeoid At(Vector3 position)
+        {
+            Vector3 minAt = Min + position;
+            Vector3 maxAt = Max + position;
+            return new Cubeoid(minAt, maxAt);
+        }
+
     }
 }

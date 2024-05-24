@@ -1,6 +1,7 @@
 ﻿using Silk.NET.Vulkan;
 using Vulkano.Engine;
 using Vulkano.Graphics.ChunkRenderSystem;
+using Vulkano.Graphics.ModelRenderSystem;
 using Vulkano.Graphics.SelectionRenderSystem;
 using Vulkano.Utils.Maths;
 
@@ -15,6 +16,8 @@ namespace Vulkano.Graphics
         public  ChunkRenderer? ChunkRenderer { get; set; }
 
         public SelectionRenderer? SelectionRenderer { get; set; }
+
+        public ModelRenderer? ModelRenderer { get; set; }
 
         public DebugLineRenderer? DebugLineRenderer { get; set; }
 
@@ -43,6 +46,7 @@ namespace Vulkano.Graphics
 
             ChunkRenderer?.Render(camera, cmd.Value);
             SelectionRenderer?.Render(camera, cmd.Value);
+            ModelRenderer?.Render(camera, cmd.Value);
             DebugLineRenderer?.Render(camera, cmd.Value);
 
             _engine.Swapchain.EndRenderPass(cmd.Value);
@@ -57,6 +61,7 @@ namespace Vulkano.Graphics
             DebugLineRenderer?.Dispose();
             SelectionRenderer?.Dispose();
             ChunkRenderer?.Dispose();
+            ModelRenderer?.Dispose();
         }
 
     }

@@ -2,10 +2,12 @@
 using Silk.NET.Vulkan;
 using System.Numerics;
 using Vulkano.Engine;
-using Vulkano.Entities;
+using Vulkano.Entities.Creatures;
 using Vulkano.Graphics;
 using Vulkano.Graphics.ChunkRenderSystem;
+using Vulkano.Graphics.ModelRenderSystem;
 using Vulkano.Graphics.SelectionRenderSystem;
+using Vulkano.Physics;
 using Vulkano.Utils;
 using Vulkano.Utils.Maths;
 
@@ -14,12 +16,15 @@ namespace Vulkano
     internal class Vulkano : IDisposable
     {
 
-        private Vk? _vk;
-        private VulkanEngine? _engine;
-
         private readonly Display _display;
 
+        private readonly IList<Zombie> _zombies = new List<Zombie>();
+
         private readonly Utils.Timer _timer = new();
+        private readonly PhysicsEnvironment _physicsEnvironment = new();
+
+        private Vk? _vk;
+        private VulkanEngine? _engine;
 
         private World.World? _world;
         private MasterRenderer? _renderer;
@@ -28,6 +33,8 @@ namespace Vulkano
         private Camera? _camera;
 
         private HitResult? _hitResult = null;
+
+        private ZombieModel? _zombieModel;
 
         public Vulkano(Display display)
         {
@@ -41,12 +48,14 @@ namespace Vulkano
 
             _renderer = new MasterRenderer(_engine, _vk);
             _renderer.DebugLineRenderer = new DebugLineRenderer(_engine, _vk);
+            _renderer.ModelRenderer = new ModelRenderer(_engine, _vk);
 
             _world = new World.World(256, 256, 64);
             _renderer.ChunkRenderer = new ChunkRenderer(_world, _engine, _vk);
 
             _camera = new Camera(70.0f * MathF.PI / 180.0f, 0.01f, 1000.0f, _display);
             _player = new Player(_world, _display.InputContext!);
+            _physicsEnvironment.AddPhysicsObject(_player);
             _camera!.Intersection = (startPos, curPos) =>
             {
                 if (curPos.X < 0 || curPos.Y < 0 || curPos.Z < 0)
@@ -81,6 +90,14 @@ namespace Vulkano
 
             _renderer.SelectionRenderer = new SelectionRenderer(_engine, _vk);
 
+            _zombieModel = new ZombieModel(_renderer!.ModelRenderer!, _engine, _vk);
+            for (uint i = 0; i < 100; i++)
+            {
+                var zomb = new Zombie(_world!);
+                _zombies.Add(zomb);
+                _physicsEnvironment.AddPhysicsObject(zomb);
+            }
+
             _timer.Start();
         }
 
@@ -110,6 +127,13 @@ namespace Vulkano
             _player!.Update((float)delta);
             _camera!.MoveToPlayer(_player!);
             _camera!.Update();
+
+            foreach (Zombie zomb in _zombies)
+            {
+                zomb.Update((float)delta);
+            }
+
+            _physicsEnvironment.Update((float)delta);
 
             Pick();
 
@@ -141,6 +165,11 @@ namespace Vulkano
 
         public void Render(double d)
         {
+            foreach (Zombie zomb in _zombies)
+            {
+                _zombieModel!.RenderAt(zomb.Transform, zomb.AnimationTime);
+            }
+
             if (_hitResult.HasValue)
             {
                 _renderer!.SelectionRenderer!.RenderHit(_hitResult.Value);
@@ -158,6 +187,8 @@ namespace Vulkano
             _player!.Dispose();
 
             VkUtils.AssertVk(_vk!.DeviceWaitIdle(_engine!.Device));
+
+            _zombieModel!.Dispose();
 
             _renderer?.Dispose();
 
